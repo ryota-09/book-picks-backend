@@ -13,8 +13,10 @@ datasource db {
 model User {
   userId    Int    @id @default(autoincrement())
   username  String
-  avatatar  String
-  remarks  String
+  email  String @unique
+  password  String
+  avatatar  String?
+  remarks  String?
   userBookCollection  BookCollection?
 }
 
@@ -22,7 +24,6 @@ model BookCollection {
   collectionId  Int  @id  @default(autoincrement())
   authorId Int 
   author User  @relation(fields: [authorId], references: [userId])
-  bookIdList Int[] 
   bookList  Book[]
   likeCount Int
 }

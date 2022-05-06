@@ -2,8 +2,10 @@
 CREATE TABLE "User" (
     "userId" SERIAL NOT NULL,
     "username" TEXT NOT NULL,
-    "avatatar" TEXT NOT NULL,
-    "remarks" TEXT NOT NULL,
+    "email" TEXT NOT NULL,
+    "password" TEXT NOT NULL,
+    "avatatar" TEXT,
+    "remarks" TEXT,
 
     CONSTRAINT "User_pkey" PRIMARY KEY ("userId")
 );
@@ -12,7 +14,6 @@ CREATE TABLE "User" (
 CREATE TABLE "BookCollection" (
     "collectionId" SERIAL NOT NULL,
     "authorId" INTEGER NOT NULL,
-    "bookIdList" INTEGER[],
     "likeCount" INTEGER NOT NULL,
 
     CONSTRAINT "BookCollection_pkey" PRIMARY KEY ("collectionId")
