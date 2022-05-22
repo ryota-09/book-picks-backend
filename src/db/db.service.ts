@@ -38,6 +38,17 @@ export class DbService {
     return newUser;
   }
 
+  async getUserByEmail(email: string) {
+    const userList = await prisma.user.findMany();
+    let targetUser: User;
+    for (const user of userList) {
+      if (user.email === email) {
+        targetUser = user;
+      }
+    }
+    return targetUser;
+  }
+
   async addBook(addBookDto: AddBookDto) {
     const newBook = await prisma.book.create({
       data: {
