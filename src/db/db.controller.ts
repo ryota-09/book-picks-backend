@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Patch, Post } from '@nestjs/common';
+import { Body, Controller, Get, Param, Patch, Post } from '@nestjs/common';
 import { DbService } from './db.service';
 import { AddBookDto } from './dto/add-book.dto';
 import { CreateUserDto } from './dto/create-user.dto';
@@ -20,5 +20,10 @@ export class DbController {
   @Get()
   getAllBookCollection() {
     return this.dbService.getAllBookCollection();
+  }
+
+  @Get(':userId')
+  getBookCollectionByUserId(@Param('userId') userId: number) {
+    return this.dbService.getBookCollectionByUserId(userId);
   }
 }

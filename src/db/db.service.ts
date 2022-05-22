@@ -1,5 +1,7 @@
 import { Injectable } from '@nestjs/common';
-import { Book, BookCollection, PrismaClient, User } from '@prisma/client';
+import { Book, PrismaClient, User } from '@prisma/client';
+import * as bcrypt from 'bcryptjs';
+
 import { AddBookDto } from './dto/add-book.dto';
 import { CreateUserDto } from './dto/create-user.dto';
 
@@ -17,11 +19,12 @@ const prisma = new PrismaClient({
 @Injectable()
 export class DbService {
   async createUser(createUserDto: CreateUserDto) {
+    const salt = await bcrypt.genSalt();
     const newUser = await prisma.user.create({
       data: {
         username: createUserDto.username,
         email: createUserDto.email,
-        password: createUserDto.password,
+        password: await bcrypt.hash(createUserDto.password, salt),
         avatatar: '',
         remarks: '',
         userBookCollection: {
@@ -81,5 +84,36 @@ export class DbService {
 
     await prisma.$disconnect();
     return allBookCollection;
+  }
+
+  async getBookCollectionByUserId(
+    userId: number,
+  ): Promise<ReturnCollectionType> {
+    const originCollection = await prisma.bookCollection.findUnique({
+      where: {
+        authorId: Number(userId),
+      },
+    });
+    const originUser = await prisma.user.findUnique({
+      where: {
+        userId: Number(userId),
+      },
+    });
+
+    const originBooks = await prisma.book.findMany();
+    const targetBookList: Book[] = [];
+
+    for (const book of originBooks) {
+      if (book.connectId === originCollection.collectionId) {
+        targetBookList.push(book);
+      }
+    }
+    await prisma.$disconnect();
+    return {
+      collectionId: originCollection.collectionId,
+      author: originUser,
+      bookList: targetBookList,
+      likeCount: originCollection.likeCount,
+    };
   }
 }
