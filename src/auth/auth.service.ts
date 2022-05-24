@@ -19,14 +19,23 @@ export class AuthService {
     if (!isValid) {
       throw new UnauthorizedException('パスワードが間違っています！');
     }
-    return isValid;
+    return { isValid, user };
   }
 
   async login(user: CreateUserDto) {
+    const targetUser = await this.dbService.getUserByEmail(user.email);
     if (await this.validate(user)) {
       const payload = { email: user.email, password: user.password };
       return {
         access_token: this.jwtService.sign(payload),
+        user: {
+          userId: targetUser.userId,
+          username: targetUser.username,
+          email: '',
+          password: '',
+          avatatar: targetUser.avatatar,
+          remarks: targetUser.remarks,
+        },
       };
     }
   }

@@ -17,7 +17,7 @@ export type BookInfoType = {
 @Injectable()
 export class ScrapingService {
   async scrapingBooks(searchText: SearchTextDto) {
-    const random = Math.floor(Math.random() * 7);
+    const random = Math.floor(Math.random() * 2);
 
     const browser = await puppeteer.launch({
       headless: false,
@@ -82,7 +82,7 @@ export class ScrapingService {
 
     try {
       for (const title of titleList) {
-        if (bookInfoList.bookInfoList.length <= 1) {
+        if (bookInfoList.bookInfoList.length <= 5) {
           bookInfoList.bookInfoList.push(await makeBookInfo(title.title));
         } else {
           break;

@@ -4,6 +4,9 @@ import * as bcrypt from 'bcryptjs';
 
 import { AddBookDto } from './dto/add-book.dto';
 import { CreateUserDto } from './dto/create-user.dto';
+import { DeleteBookDto } from './dto/delete-book.dto';
+import { UpdateUserDto } from './dto/update-user.dto';
+import { UpdateCollectionDto } from './dto/update-collection.dto';
 
 export type ReturnCollectionType = {
   collectionId: number;
@@ -38,6 +41,26 @@ export class DbService {
     return newUser;
   }
 
+  async updateUser(updateUserDto: UpdateUserDto) {
+    const updatedUser = await prisma.user.update({
+      where: {
+        userId: Number(updateUserDto.userId),
+      },
+      data: {
+        avatatar: updateUserDto.avatatar,
+        remarks: updateUserDto.remarks,
+      },
+    });
+    return {
+      userId: updatedUser.userId,
+      username: updatedUser.username,
+      email: '',
+      password: '',
+      avatatar: updatedUser.avatatar,
+      remarks: updatedUser.remarks,
+    };
+  }
+
   async getUserByEmail(email: string) {
     const userList = await prisma.user.findMany();
     let targetUser: User;
@@ -65,6 +88,14 @@ export class DbService {
     });
     await prisma.$disconnect();
     return newBook;
+  }
+
+  async deleteBook(deleteBookDto: DeleteBookDto) {
+    await prisma.book.delete({
+      where: { bookId: Number(deleteBookDto.bookId) },
+    });
+    await prisma.$disconnect();
+    return 'DELETE成功!';
   }
 
   async getAllBookCollection() {
@@ -126,5 +157,29 @@ export class DbService {
       bookList: targetBookList,
       likeCount: originCollection.likeCount,
     };
+  }
+
+  async countUpStars(updateCollectionDto: UpdateCollectionDto) {
+    await prisma.bookCollection.update({
+      where: {
+        collectionId: Number(updateCollectionDto.collectionId),
+      },
+      data: {
+        likeCount: Number(updateCollectionDto.likeCount) + 1,
+      },
+    });
+    return 'カウントアップ成功';
+  }
+
+  async countDownStars(updateCollectionDto: UpdateCollectionDto) {
+    await prisma.bookCollection.update({
+      where: {
+        collectionId: Number(updateCollectionDto.collectionId),
+      },
+      data: {
+        likeCount: Number(updateCollectionDto.likeCount) - 1,
+      },
+    });
+    return 'カウントダウン成功';
   }
 }
