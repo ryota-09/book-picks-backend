@@ -82,7 +82,7 @@ export class ScrapingService {
 
     try {
       for (const title of titleList) {
-        if (bookInfoList.bookInfoList.length <= 5) {
+        if (bookInfoList.bookInfoList.length <= 3) {
           bookInfoList.bookInfoList.push(await makeBookInfo(title.title));
         } else {
           break;

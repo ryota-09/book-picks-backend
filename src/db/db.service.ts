@@ -160,7 +160,7 @@ export class DbService {
   }
 
   async countUpStars(updateCollectionDto: UpdateCollectionDto) {
-    await prisma.bookCollection.update({
+    const updatedCollection = await prisma.bookCollection.update({
       where: {
         collectionId: Number(updateCollectionDto.collectionId),
       },
@@ -168,11 +168,14 @@ export class DbService {
         likeCount: Number(updateCollectionDto.likeCount) + 1,
       },
     });
-    return 'カウントアップ成功';
+    return {
+      message: 'カウントアップ成功',
+      likeCount: updatedCollection.likeCount,
+    };
   }
 
   async countDownStars(updateCollectionDto: UpdateCollectionDto) {
-    await prisma.bookCollection.update({
+    const updatedCollection = await prisma.bookCollection.update({
       where: {
         collectionId: Number(updateCollectionDto.collectionId),
       },
@@ -180,6 +183,9 @@ export class DbService {
         likeCount: Number(updateCollectionDto.likeCount) - 1,
       },
     });
-    return 'カウントダウン成功';
+    return {
+      message: 'カウントダウン成功',
+      likeCount: updatedCollection.likeCount,
+    };
   }
 }
