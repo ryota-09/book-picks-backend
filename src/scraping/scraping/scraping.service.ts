@@ -20,7 +20,7 @@ export class ScrapingService {
     const random = Math.floor(Math.random() * 2);
 
     const browser = await puppeteer.launch({
-      headless: false,
+      headless: true,
       args: ['--no-sandbox', '--disable-setuid-sandbox'],
     });
     const page = await browser.newPage();
